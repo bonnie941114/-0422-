@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>卓配鏡 21 歲生日卡片 - 最終版本</title>
+    <title>卓配鏡 21 歲生日快樂！ - 蛋糕慶生版</title>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+Kuaile&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,7 +25,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 背景掃描線 */
+        /* 掃描線效果 */
         .scanlines {
             position: absolute; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
@@ -41,7 +41,6 @@
             z-index: 10;
         }
 
-        /* 橫式卡片容器 */
         .card {
             width: 90vw; max-width: 800px; height: 420px;
             background: rgba(15, 15, 20, 0.98);
@@ -50,12 +49,12 @@
             position: relative; overflow: hidden;
         }
 
-        /* 標題需求：卓配鏡同一行 + 漸層內容 + 凹凸效果 */
+        /* 標題需求：同一行 + 漸層內容 + 凹凸效果 */
         .title-line {
             width: 100%;
             display: flex; justify-content: center; align-items: center;
             white-space: nowrap; /* 強制不換行 */
-            font-size: clamp(1.1rem, 4.5vw, 1.8rem); /* 根據手機螢幕自動縮放 */
+            font-size: clamp(1.1rem, 4.5vw, 1.8rem); /* 根據螢幕自動縮放 */
             font-weight: 900;
             margin-bottom: 25px;
             letter-spacing: 2px;
@@ -80,22 +79,31 @@
             width: 85%; white-space: normal;
         }
 
-        /* 中央旋轉星星機關 */
-        .star-box {
+        /* 🎂 新機關：像素生日蛋糕 (取代星星) */
+        .cake-box {
             width: 80px; height: 80px; margin-bottom: 20px;
             position: relative; display: flex; justify-content: center; align-items: center;
         }
-        .main-star {
-            font-size: 55px; color: #333; opacity: 0.3; transition: 0.5s;
-        }
-        .card.active .main-star {
-            opacity: 1; color: var(--gold);
-            transform: scale(1.5);
-            animation: starRotate 2.5s infinite linear, starPulse 1s infinite alternate;
+        .main-cake {
+            font-size: 50px; opacity: 0.3; transition: 0.5s; color: #444;
+            filter: grayscale(1);
         }
 
-        @keyframes starRotate { from { transform: scale(1.5) rotate(0deg); } to { transform: scale(1.5) rotate(360deg); } }
-        @keyframes starPulse { from { filter: drop-shadow(0 0 10px var(--gold)); } to { filter: drop-shadow(0 0 25px var(--y2k-pink)); } }
+        /* 當卡片被點擊後 (active) 觸發蛋糕機關 */
+        .card.active .main-cake {
+            opacity: 1; filter: grayscale(0);
+            transform: scale(1.5);
+            animation: cakeBounce 1.5s infinite alternate, cakeGlow 1s infinite alternate;
+        }
+
+        @keyframes cakeBounce {
+            from { transform: scale(1.5); }
+            to { transform: scale(1.7); }
+        }
+        @keyframes cakeGlow {
+            from { filter: drop-shadow(0 0 10px var(--sakura)); }
+            to { filter: drop-shadow(0 0 25px var(--gold)); }
+        }
 
         /* 點擊提示 */
         .click-hint {
@@ -103,17 +111,24 @@
             padding: 10px 25px; border-radius: 30px; animation: blink 1s infinite;
         }
         @keyframes blink { 50% { opacity: 0; } }
+
+        /* 隱藏原生播放器 */
+        #hbd-audio { display: none; }
     </style>
 </head>
 <body id="body-area">
 
     <div class="scanlines"></div>
 
-    <div class="frame-glow">
+    <audio id="hbd-audio" loop preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/11/24/audio_3490710609.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="frame-glow" id="trigger-area">
         <div class="card" id="main-card">
             
-            <div class="star-box">
-                <div class="main-star">★</div>
+            <div class="cake-box">
+                <div class="main-cake">🎂</div>
             </div>
             
             <div class="title-line">
@@ -124,69 +139,40 @@
             <div class="message-box">
                 就這樣 21 歲了，突然覺得認識好久了<br>
                 祝 老闆前額葉杏仁核發展完完整整<br>
-                繼續一起開開心心跟我度過這一年女人。
+                教授咪挺什麼都過，開開心心跟我度過女人。
             </div>
 
-            <div class="click-hint" id="hint">▶ PRESS TO START FULL PARTY</div>
+            <div class="click-hint" id="hint">▶ TOUCH SCREEN TO LIGHT THE CANDLE ◀</div>
         </div>
     </div>
 
     <script>
-        const body = document.getElementById('body-area');
+        const audio = document.getElementById('hbd-audio');
         const card = document.getElementById('main-card');
         const hint = document.getElementById('hint');
 
-        body.addEventListener('click', function() {
-            // 初始化並解鎖手機音訊
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            
-            // 視覺機關啟動
-            card.classList.add('active');
-            hint.style.display = 'none';
-
-            const gain = ctx.createGain();
-            gain.connect(ctx.destination);
-            gain.gain.setValueAtTime(0.06, ctx.currentTime);
-
-            // 完整的像素風 Happy Birthday 旋律
-            const G3=392, A3=440, B3=493, C4=523, D4=587, E4=659, F4=698, G4=783;
-            const melody = [
-                G3, G3, A3, G3, C4, B3,      // Happy birthday to you
-                G3, G3, A3, G3, D4, C4,      // Happy birthday to you
-                G3, G3, G4, E4, C4, B3, A3,  // Happy birthday dear Peijing
-                F4, F4, E4, C4, D4, C4       // Happy birthday to you
-            ];
-
-            // 輕快節奏設定 (0.22s 一拍)
-            const tempo = 0.22;
-            const beats = [
-                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4,
-                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4,
-                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*2, tempo*4,
-                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*6
-            ];
-
-            let time = ctx.currentTime;
-            melody.forEach((freq, i) => {
-                const osc = ctx.createOscillator();
-                const oscGain = ctx.createGain();
-                
-                osc.type = 'square'; // 清脆方波音色
-                osc.frequency.setValueAtTime(freq, time);
-                
-                // 每個音符的跳躍感處理
-                oscGain.gain.setValueAtTime(0.06, time);
-                oscGain.gain.exponentialRampToValueAtTime(0.0001, time + beats[i] - 0.05);
-                
-                osc.connect(oscGain);
-                oscGain.connect(gain);
-                
-                osc.start(time);
-                osc.stop(time + beats[i]);
-                time += beats[i];
+        // 手機版音訊解鎖核心 Function
+        function startBirthdayParty() {
+            // 每次點擊先解鎖音訊
+            audio.play().then(() => {
+                // 成功播放
+                card.classList.add('active');
+                hint.style.display = 'none';
+            }).catch(error => {
+                console.log("Audio play failed", error);
+                // 如果失敗（可能是靜音模式），這裡至少能觸發視覺
+                card.classList.add('active');
+                hint.innerText = "請開聲音以聽到音樂";
             });
-        }, { once: true }); // 點擊一次後不再重複觸發
+        }
+
+        // 針對 iOS 額外增加手指碰觸解鎖
+        document.body.addEventListener('touchstart', function() {
+            audio.load();
+        }, { once: true });
+
+        // 綁定點擊事件
+        document.getElementById('trigger-area').addEventListener('click', startBirthdayParty);
     </script>
 </body>
 </html>
