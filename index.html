@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>卓配鏡 21 歲生日卡片</title>
+    <title>卓配鏡 21 歲生日卡片 - 最終版本</title>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+Kuaile&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,12 +25,14 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* 背景掃描線 */
         .scanlines {
             position: absolute; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
             background-size: 100% 4px; z-index: 20; pointer-events: none;
         }
 
+        /* 霓虹發光外框 */
         .frame-glow {
             padding: 8px;
             background: linear-gradient(90deg, var(--y2k-pink), var(--meta-blue));
@@ -39,62 +41,84 @@
             z-index: 10;
         }
 
+        /* 橫式卡片容器 */
         .card {
-            width: 90vw; max-width: 800px; height: 380px;
+            width: 90vw; max-width: 800px; height: 420px;
             background: rgba(15, 15, 20, 0.98);
             border: 3px solid #fff; border-radius: 10px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative; overflow: hidden;
         }
 
-        /* 標題：粉色漸層內容 + 凹凸效果 (強制一行) */
+        /* 標題需求：卓配鏡同一行 + 漸層內容 + 凹凸效果 */
         .title-line {
-            font-size: 1.6rem; font-weight: 900; margin-bottom: 20px;
-            display: flex; white-space: nowrap;
+            width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            white-space: nowrap; /* 強制不換行 */
+            font-size: clamp(1.1rem, 4.5vw, 1.8rem); /* 根據手機螢幕自動縮放 */
+            font-weight: 900;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
         }
+
         .gradient-name {
             background: linear-gradient(to bottom, var(--sakura), var(--usubeni));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(3px 3px 0px #000);
+            filter: drop-shadow(4px 4px 0px #000);
         }
-        .hbd-white { color: #fff; filter: drop-shadow(3px 3px 0px #000); margin-left: 8px; }
 
+        .hbd-white {
+            color: #fff;
+            filter: drop-shadow(4px 4px 0px #000);
+            margin-left: 10px;
+        }
+
+        /* 祝福內文 */
         .message-box {
-            color: #ccc; font-size: 10px; line-height: 1.8;
+            color: #ccc; font-size: 10px; line-height: 2;
             text-align: center; margin-bottom: 30px;
+            width: 85%; white-space: normal;
         }
 
-        /* 蛋糕與星星機關 */
-        .visual-box { position: relative; height: 80px; width: 80px; margin-bottom: 20px; }
-        .cake { font-size: 45px; transition: 0.5s; }
-        .star { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            font-size: 40px; color: var(--gold); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* 中央旋轉星星機關 */
+        .star-box {
+            width: 80px; height: 80px; margin-bottom: 20px;
+            position: relative; display: flex; justify-content: center; align-items: center;
+        }
+        .main-star {
+            font-size: 55px; color: #333; opacity: 0.3; transition: 0.5s;
+        }
+        .card.active .main-star {
+            opacity: 1; color: var(--gold);
+            transform: scale(1.5);
+            animation: starRotate 2.5s infinite linear, starPulse 1s infinite alternate;
         }
 
-        .card.active .cake { transform: scale(0); opacity: 0; }
-        .card.active .star { transform: translate(-50%, -50%) scale(1.5) rotate(360deg); opacity: 1; }
+        @keyframes starRotate { from { transform: scale(1.5) rotate(0deg); } to { transform: scale(1.5) rotate(360deg); } }
+        @keyframes starPulse { from { filter: drop-shadow(0 0 10px var(--gold)); } to { filter: drop-shadow(0 0 25px var(--y2k-pink)); } }
 
+        /* 點擊提示 */
         .click-hint {
-            color: var(--gold); font-size: 10px; border: 1px solid var(--gold);
-            padding: 8px 20px; border-radius: 30px; animation: blink 1s infinite;
+            color: var(--gold); font-size: 9px; border: 1px solid var(--gold);
+            padding: 10px 25px; border-radius: 30px; animation: blink 1s infinite;
         }
         @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
-<body id="body">
+<body id="body-area">
 
     <div class="scanlines"></div>
 
     <div class="frame-glow">
         <div class="card" id="main-card">
-            <div class="visual-box">
-                <div class="cake">🎂</div>
-                <div class="star">🌟</div>
+            
+            <div class="star-box">
+                <div class="main-star">★</div>
             </div>
             
             <div class="title-line">
-                <span class="gradient-name">卓配鏡</span><span class="hbd-white">生日快樂！！！</span>
+                <span class="gradient-name">卓配鏡</span>
+                <span class="hbd-white">生日快樂！！！</span>
             </div>
 
             <div class="message-box">
@@ -103,46 +127,66 @@
                 繼續一起開開心心跟我度過這一年女人。
             </div>
 
-            <div class="click-hint" id="hint">▶ PRESS TO START PARTY</div>
+            <div class="click-hint" id="hint">▶ PRESS TO START FULL PARTY</div>
         </div>
     </div>
 
     <script>
-        // 核心修正：極簡化音樂觸發，避開所有異步調用
-        const body = document.getElementById('body');
+        const body = document.getElementById('body-area');
         const card = document.getElementById('main-card');
         const hint = document.getElementById('hint');
 
         body.addEventListener('click', function() {
-            // 1. 立即創建音訊上下文（這步在點擊當下完成，手機才會認可）
+            // 初始化並解鎖手機音訊
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
             
-            // 2. 啟動視覺機關
+            // 視覺機關啟動
             card.classList.add('active');
             hint.style.display = 'none';
 
-            // 3. 直接在當前執行緒播放音樂
             const gain = ctx.createGain();
             gain.connect(ctx.destination);
-            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.setValueAtTime(0.06, ctx.currentTime);
 
-            // 輕快 Happy Birthday 旋律代碼
-            const G3=392, A3=440, B3=493, C4=523, D4=587, E4=659, G4=783;
-            const melody = [G3,G3,A3,G3,C4,B3,G3,G3,A3,G3,D4,C4,G3,G3,G4,E4,C4,B3,A3];
-            const beats = [0.2,0.2,0.4,0.4,0.4,0.6,0.2,0.2,0.4,0.4,0.4,0.6,0.2,0.2,0.4,0.4,0.4,0.4,0.8];
+            // 完整的像素風 Happy Birthday 旋律
+            const G3=392, A3=440, B3=493, C4=523, D4=587, E4=659, F4=698, G4=783;
+            const melody = [
+                G3, G3, A3, G3, C4, B3,      // Happy birthday to you
+                G3, G3, A3, G3, D4, C4,      // Happy birthday to you
+                G3, G3, G4, E4, C4, B3, A3,  // Happy birthday dear Peijing
+                F4, F4, E4, C4, D4, C4       // Happy birthday to you
+            ];
+
+            // 輕快節奏設定 (0.22s 一拍)
+            const tempo = 0.22;
+            const beats = [
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4,
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4,
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*2, tempo*4,
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*6
+            ];
 
             let time = ctx.currentTime;
             melody.forEach((freq, i) => {
                 const osc = ctx.createOscillator();
-                osc.type = 'square'; // 輕快像素音色
+                const oscGain = ctx.createGain();
+                
+                osc.type = 'square'; // 清脆方波音色
                 osc.frequency.setValueAtTime(freq, time);
-                osc.connect(gain);
+                
+                // 每個音符的跳躍感處理
+                oscGain.gain.setValueAtTime(0.06, time);
+                oscGain.gain.exponentialRampToValueAtTime(0.0001, time + beats[i] - 0.05);
+                
+                osc.connect(oscGain);
+                oscGain.connect(gain);
+                
                 osc.start(time);
-                osc.stop(time + beats[i] - 0.05);
+                osc.stop(time + beats[i]);
                 time += beats[i];
             });
-        }, { once: true }); // 確保只觸發一次，防止重複疊加聲音
+        }, { once: true }); // 點擊一次後不再重複觸發
     </script>
 </body>
 </html>
