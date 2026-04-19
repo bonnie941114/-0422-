@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>卓配鏡 21 歲生日卡片 - 手機優化版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>卓配鏡 21 歲生日卡片 - 手機終極相容版</title>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+Kuaile&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -23,8 +23,7 @@
             display: flex; justify-content: center; align-items: center;
             background-color: var(--bg-dark);
             font-family: 'Press Start 2P', 'ZCOOL Kuaile', sans-serif;
-            cursor: pointer;
-            touch-action: manipulation; /* 優化手機點擊延遲 */
+            -webkit-tap-highlight-color: transparent; /* 移除手機點擊陰影 */
         }
 
         /* 掃描線 */
@@ -38,120 +37,117 @@
         }
 
         .frame-glow {
-            padding: 8px;
+            padding: 6px;
             background: linear-gradient(90deg, var(--y2k-pink), var(--meta-blue));
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.4);
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
             z-index: 10;
         }
 
-        /* 手機適應性寬度 */
+        /* 手機卡片寬度優化 */
         .card {
-            width: 90vw; max-width: 880px; height: 420px;
-            background: rgba(15, 15, 20, 0.95);
-            backdrop-filter: blur(25px);
-            border: 4px solid #fff;
-            border-radius: 10px;
+            width: 92vw; height: 400px;
+            background: rgba(15, 15, 20, 0.98);
+            border: 3px solid #fff;
+            border-radius: 8px;
             display: flex; align-items: center;
-            padding: 0 30px;
+            padding: 0 20px;
             position: relative;
             overflow: hidden;
         }
 
-        /* 文字內容 */
+        /* 文字內容：強制同一行 */
         .content {
-            flex: 1.2;
+            flex: 1.5;
             z-index: 30;
-            white-space: nowrap;
         }
 
         .title-line {
             display: flex;
             align-items: center;
-            font-size: 1.5rem; /* 手機稍微縮小字體防止溢出 */
+            font-size: 1.2rem; /* 手機最適字體大小 */
             font-weight: 900;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
+            margin-bottom: 15px;
+            white-space: nowrap; /* 絕對不換行 */
         }
 
         .gradient-name {
             background: linear-gradient(to bottom, var(--sakura), var(--usubeni));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(3px 3px 0px #000);
+            filter: drop-shadow(2px 2px 0px #000);
         }
 
         .hbd-white {
             color: #fff;
-            filter: drop-shadow(3px 3px 0px #000);
-            margin-left: 8px;
+            filter: drop-shadow(2px 2px 0px #000);
+            margin-left: 5px;
         }
 
         .message-list {
             color: #ccc;
             font-size: 9px;
-            line-height: 2;
+            line-height: 1.8;
             white-space: normal;
         }
-        .list-item { display: flex; align-items: flex-start; margin-bottom: 8px; }
+        .list-item { display: flex; align-items: flex-start; margin-bottom: 6px; }
         .heart-num {
-            width: 18px; height: 18px;
+            width: 16px; height: 16px;
             background: var(--y2k-pink);
             clip-path: polygon(50% 15%, 70% 0%, 100% 15%, 100% 60%, 50% 100%, 0% 60%, 0% 15%, 30% 0%);
-            margin-right: 10px;
+            margin-right: 8px;
             display: flex; justify-content: center; align-items: center;
-            color: #fff; font-size: 7px; flex-shrink: 0;
+            color: #fff; font-size: 6px; flex-shrink: 0;
         }
 
         /* 蛋糕機關 */
-        .visual { flex: 0.8; display: flex; justify-content: center; align-items: center; position: relative; }
+        .visual { flex: 0.5; display: flex; justify-content: center; align-items: center; position: relative; }
         .pixel-cake {
-            width: 100px; height: 80px;
+            width: 80px; height: 60px;
             position: relative; transform: scale(0);
-            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 50;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .cake-body { width: 100px; height: 50px; background: #fff; border: 3px solid #000; position: absolute; bottom: 0; box-shadow: inset 0 -8px 0 var(--sakura); }
-        .candle { width: 8px; height: 25px; background: var(--meta-blue); position: absolute; top: -25px; left: 50%; transform: translateX(-50%); border: 2px solid #000; }
-        .flame { width: 10px; height: 16px; background: var(--fire-orange); position: absolute; top: -20px; left: 50%; transform: translateX(-50%) scale(0); border-radius: 50% 50% 20% 20%; transition: 0.3s 0.8s; }
+        .cake-body { width: 80px; height: 40px; background: #fff; border: 2px solid #000; position: absolute; bottom: 0; box-shadow: inset 0 -5px 0 var(--sakura); }
+        .candle { width: 6px; height: 20px; background: var(--meta-blue); position: absolute; top: -20px; left: 50%; transform: translateX(-50%); border: 1.5px solid #000; }
+        .flame { width: 8px; height: 14px; background: var(--fire-orange); position: absolute; top: -16px; left: 50%; transform: translateX(-50%) scale(0); border-radius: 50% 50% 20% 20%; }
 
         .card.active .pixel-cake { transform: scale(1.1); }
-        .card.active .flame { transform: translateX(-50%) scale(1); animation: flicker 0.2s infinite alternate; box-shadow: 0 0 15px var(--fire-orange); }
+        .card.active .flame { transform: translateX(-50%) scale(1); animation: flicker 0.2s infinite alternate; }
 
         @keyframes flicker { from { transform: translateX(-50%) scale(1) rotate(-2deg); } to { transform: translateX(-50%) scale(1.1) rotate(2deg); } }
 
-        /* 休寧凱降臨 */
+        /* 人物驚喜 */
         .idol-surprise {
             position: absolute;
-            width: 320px; right: -400px; bottom: -40px;
-            transform: scale(0.8); opacity: 0;
+            width: 280px; right: -350px; bottom: -30px;
+            transform: scale(0.9); opacity: 0;
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
         }
-        .card.active .idol-surprise { right: -30px; opacity: 1; transform: scale(1) rotate(-3deg); }
+        .card.active .idol-surprise { right: -20px; opacity: 1; transform: scale(1) rotate(-3deg); }
 
-        .click-hint { position: absolute; bottom: 20px; left: 30px; color: var(--gold); font-size: 8px; animation: blink 1s infinite; }
+        .click-hint { position: absolute; bottom: 15px; left: 20px; color: var(--gold); font-size: 8px; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
-<body>
+<body id="body-area">
 
     <div class="scanlines"></div>
 
-    <div class="frame-glow" id="trigger-area">
+    <div class="frame-glow">
         <div class="card" id="main-card">
             <div class="content">
-                <span style="color:var(--meta-blue); font-size:8px; margin-bottom:15px; display:block;">✕ MOBILE_SYNC: ENABLED</span>
+                <span style="color:var(--meta-blue); font-size:7px; margin-bottom:12px; display:block;">✕ MOBILE_CORE_V4: STABLE</span>
                 <div class="title-line">
                     <span class="gradient-name">卓配鏡</span>
                     <span class="hbd-white">生日快樂！！！</span>
                 </div>
                 <div class="message-list">
-                    <div class="list-item"><div class="heart-num">1</div> 就這樣 21 歲了，突然覺得認識好久了</div>
-                    <div class="list-item"><div class="heart-num">2</div> 祝 老闆前額葉杏仁核發展完完整整...</div>
-                    <div class="list-item"><div class="heart-num">3</div> 繼續一起開開心心度過這一年女人。</div>
+                    <div class="list-item"><div class="heart-num">1</div> 就這樣 21 歲了，認識好久了</div>
+                    <div class="list-item"><div class="heart-num">2</div> 祝 老闆前額葉杏仁核完整</div>
+                    <div class="list-item"><div class="heart-num">3</div> 繼續開開心心跟我度過女人</div>
                 </div>
-                <div class="click-hint">▶ TOUCH TO START PARTY</div>
+                <div class="click-hint">▶ PRESS TO START</div>
             </div>
 
             <div class="visual">
@@ -161,61 +157,64 @@
                 </div>
             </div>
 
-            <img src="image_b16160.png" class="idol-surprise" alt="偶像降臨">
+            <img src="image_b16160.png" class="idol-surprise" id="idol-img">
         </div>
     </div>
 
     <script>
-        // 核心修正：手機音訊上下文解鎖
-        let audioCtx;
-        
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            // 如果是在暫停狀態（手機瀏覽器預設），則啟動它
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+        // 核心修正：全域 AudioContext 預創建
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let isActivated = false;
+
+        function startSequence() {
+            if (isActivated) return;
+            isActivated = true;
+
+            // 1. 立即初始化並解鎖 AudioContext
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            // 2. 啟動視覺機關
+            document.getElementById('main-card').classList.add('active');
+            document.querySelector('.click-hint').style.display = 'none';
+
+            // 3. 音樂播放
+            playUpbeatMusic(audioCtx);
         }
 
-        function playUpbeatSurprise() {
-            initAudio(); // 每次點擊先解鎖音訊
-
-            const gain = audioCtx.createGain();
-            gain.connect(audioCtx.destination);
-            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        function playUpbeatMusic(ctx) {
+            const gain = ctx.createGain();
+            gain.connect(ctx.destination);
+            gain.gain.setValueAtTime(0.06, ctx.currentTime);
 
             const G3 = 392, A3 = 440, B3 = 493.88, C4 = 523.25, D4 = 587.33, E4 = 659.25, F4 = 698.46, G4 = 783.99;
             const melody = [G3, G3, A3, G3, C4, B3, G3, G3, A3, G3, D4, C4, G3, G3, G4, E4, C4, B3, A3, F4, F4, E4, C4, D4, C4];
             const tempo = 0.22; 
-            const times = [tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*3, tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*3, tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*2, tempo*3, tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4];
 
             let offset = 0;
             melody.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
+                const osc = ctx.createOscillator();
+                const noteGain = ctx.createGain();
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + offset);
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
                 
-                const noteGain = audioCtx.createGain();
-                noteGain.gain.setValueAtTime(0.06, audioCtx.currentTime + offset);
-                noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + offset + times[i] - 0.05);
+                noteGain.gain.setValueAtTime(0.06, ctx.currentTime + offset);
+                noteGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + offset + tempo - 0.05);
                 
                 osc.connect(noteGain);
-                noteGain.connect(audioCtx.destination);
+                noteGain.connect(ctx.destination);
                 
-                osc.start(audioCtx.currentTime + offset);
-                osc.stop(audioCtx.currentTime + offset + times[i]);
-                offset += times[i];
+                osc.start(ctx.currentTime + offset);
+                osc.stop(ctx.currentTime + offset + tempo);
+                offset += tempo;
             });
-
-            document.getElementById('main-card').classList.add('active');
-            document.querySelector('.click-hint').style.display = 'none';
         }
 
-        // 使用 addEventListener 替代內聯 onclick，對手機更友好
-        document.getElementById('trigger-area').addEventListener('click', playUpbeatSurprise);
-        document.getElementById('trigger-area').addEventListener('touchstart', initAudio); 
+        // 綁定所有可能觸發的手勢事件
+        const trigger = document.getElementById('body-area');
+        trigger.addEventListener('click', startSequence);
+        trigger.addEventListener('touchend', startSequence);
     </script>
 </body>
 </html>
