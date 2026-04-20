@@ -7,106 +7,163 @@
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+Kuaile&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #050508;
+            /* 重新配置：焦糖暖棕與深夜電玩房 */
+            --bg-world: #050a14;    /* 全域大背景：深夜藍 */
+            --card-kraft-px: #8b572a; /* 封面：焦糖暖棕牛皮紙感 (焦糖替換黃色) */
+            --card-inner-px: #10101a; /* 內頁：深夜黑藍 */
+            
             --sakura: #fdeff2;    
             --usubeni: #e87a90;   
-            --y2k-pink: #ff00ff;  
             --meta-blue: #33ffff; 
             --gold: #ffd700;
             --flame: #ff4500;
+            
+            --card-w: 90vw;
+            --card-max-w: 650px;
+            --card-h: 420px;
         }
 
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; display: flex; justify-content: center; align-items: center;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-world);
             font-family: 'Press Start 2P', 'ZCOOL Kuaile', sans-serif;
+            perspective: 2500px;
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* 👾 優化：背景裝飾 (閃耀銀色像素星空嘉年華) */
+        body::before {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            /* 修正為銀色、白色交織的像素星空 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23ffffff' opacity='0.3'/%3E%3Ccircle cx='150' cy='50' r='1.2' fill='%23c0c0c0' opacity='0.25'/%3E%3Ccircle cx='80' cy='160' r='1' fill='%23e0e0e0' opacity='0.2'/%3E%3Ccircle cx='300' cy='100' r='1' fill='%23ffffff' opacity='0.2'/%3E%3Cpath d='M20 20 L30 10 L40 20 L30 30 Z' fill='%23ffffff' opacity='0.15'/%3E%3Cpath d='M200 200 L210 190 L220 200 L210 210 Z' fill='%23c0c0c0' opacity='0.15'/%3E%3Cpath d='M100 300 L110 290 L120 300 L110 310 Z' fill='%23e0e0e0' opacity='0.1'/%3E%3Cpath d='M350 350 L360 340 L370 350 L360 360 Z' fill='%23ffffff' opacity='0.1'/%3E%3Crect x='100' y='50' width='3' height='3' fill='%23c0c0c0' opacity='0.15'/%3E%3Crect x='250' y='200' width='2' height='2' fill='%23ffffff' opacity='0.1'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            animation: floatingBG 18s infinite linear;
+        }
+        @keyframes floatingBG {
+            from { background-position: 0 0; }
+            to { background-position: 200px 200px; }
+        }
+
+        /* 螢幕掃描線 */
         .scanlines {
             position: absolute; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px; z-index: 20; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background-size: 100% 4px; z-index: 999; pointer-events: none;
         }
 
-        .frame-glow {
-            padding: 8px; background: linear-gradient(90deg, var(--y2k-pink), var(--meta-blue));
-            border-radius: 15px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.4); z-index: 10;
+        /* 像素顆粒感圖層 */
+        .pixel-grain::before {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.12; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 10;
         }
 
-        .card {
-            width: 90vw; max-width: 800px; height: 440px;
-            background: rgba(15, 15, 20, 0.98); border: 3px solid #fff; border-radius: 10px;
+        #confetti-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 800; }
+
+        .book-wrapper {
+            width: var(--card-w); max-width: var(--card-max-w); height: var(--card-h);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            /* 卡片本身的螢光白色影子 */
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.25);
+            z-index: 10;
+        }
+
+        .card-base {
+            position: absolute; width: 100%; height: 100%;
+            border: 4px solid #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative; overflow: hidden;
+            backface-visibility: hidden;
+            overflow: hidden;
         }
 
-        /* 標題需求：卓配鏡同一行 + 漸層內容 + 凹凸效果 */
+        /* 封面：焦糖暖棕 + 紙質感 */
+        .cover {
+            background-color: var(--card-kraft-px);
+            z-index: 100;
+            transform-origin: left center;
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .book-wrapper.open .cover { transform: rotateY(-180deg); }
+
+        /* 內頁：深夜電玩視窗感 */
+        .inner-page {
+            background-color: var(--card-inner-px);
+            z-index: 50;
+            padding: 20px;
+            box-shadow: inset 0 0 60px rgba(0, 255, 255, 0.1);
+        }
+
+        /* 封面標題「女人請打開」 (保持核心不變) */
+        .front-title {
+            font-size: 2.8rem;
+            background: linear-gradient(to bottom, var(--sakura), var(--usubeni));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            /* 強化壓凹立體感 */
+            filter: drop-shadow(4px 4px 0px #000) drop-shadow(-1px -1px 0px rgba(255,255,255,0.4));
+            margin-bottom: 25px;
+            letter-spacing: 5px;
+        }
+
+        /* 內頁標題 (保持設定不變) */
         .title-line {
-            width: 100%; display: flex; justify-content: center; align-items: center;
-            white-space: nowrap; font-size: clamp(1rem, 4.5vw, 1.8rem);
-            font-weight: 900; margin-bottom: 25px;
+            display: flex; white-space: nowrap; font-size: clamp(1rem, 4vw, 1.6rem);
+            font-weight: 900; margin-bottom: 25px; align-items: center;
         }
         .gradient-name {
             background: linear-gradient(to bottom, var(--sakura), var(--usubeni));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(4px 4px 0px #000);
+            filter: drop-shadow(3px 3px 0px #000) drop-shadow(-1px -1px 0px rgba(255,255,255,0.3));
         }
-        .hbd-white { color: #fff; filter: drop-shadow(4px 4px 0px #000); margin-left: 10px; }
+        .hbd-white { color: #fff; filter: drop-shadow(3px 3px 0px #000); margin-left: 10px; }
 
-        /* 生日蛋糕機關安排 */
-        .cake-container {
-            width: 120px; height: 120px; margin-bottom: 20px;
-            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-        }
-        
-        /* 蠟燭 */
-        .candle {
-            width: 10px; height: 30px; background: var(--meta-blue);
-            border: 2px solid #fff; position: relative; z-index: 2; opacity: 0.3; transition: 0.5s;
-        }
-        /* 燭火：初始不顯示 */
-        .flame {
-            position: absolute; top: -20px; left: 50%; transform: translateX(-50%) scale(0);
-            width: 12px; height: 20px; background: var(--flame);
-            border-radius: 50% 50% 20% 20%; transition: 0.3s;
-        }
+        /* 蛋糕與蠟燭機關 (保持設定不變) */
+        .cake-container { width: 120px; height: 100px; margin-bottom: 20px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+        .candle { width: 10px; height: 30px; background: var(--meta-blue); border: 2.5px solid #fff; position: relative; }
+        .flame { position: absolute; top: -22px; left: 50%; transform: translateX(-50%) scale(0); width: 15px; height: 22px; background: var(--flame); border-radius: 50% 50% 20% 20%; transition: 0.3s; }
+        .cake-body { width: 100px; height: 50px; background: #fff; border: 4px solid #000; box-shadow: 0 6px 0 var(--usubeni); }
 
-        /* 蛋糕主體 */
-        .cake-body {
-            width: 100px; height: 50px; background: #fff;
-            border: 4px solid #fff; box-shadow: 0 5px 0 var(--usubeni);
-            opacity: 0.3; transition: 0.5s;
-        }
+        .book-wrapper.open .flame { transform: translateX(-50%) scale(1); animation: flicker 0.1s infinite alternate; box-shadow: 0 0 25px var(--gold); }
+        .book-wrapper.open .cake-container { animation: jump 0.4s infinite alternate; }
 
-        /* 啟動狀態視覺 */
-        .card.active .cake-body, .card.active .candle { opacity: 1; }
-        .card.active .flame { 
-            transform: translateX(-50%) scale(1);
-            animation: flicker 0.1s infinite alternate;
-            box-shadow: 0 0 20px var(--gold);
-        }
-        .card.active .cake-container { animation: jump 0.4s infinite alternate; }
-
-        @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; transform: translateX(-50%) scale(1.1); } }
+        @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; transform: translateX(-50%) scale(1.15); } }
         @keyframes jump { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-        .message-box { color: #ccc; font-size: 10px; line-height: 2; text-align: center; margin-bottom: 30px; width: 85%; }
-        .click-hint { color: var(--gold); font-size: 9px; border: 1px solid var(--gold); padding: 10px 25px; border-radius: 30px; animation: blink 1s infinite; }
+        /* 訊息文字 (保持設定不變) */
+        .message-box { color: #ccc; font-size: 11px; line-height: 2.2; text-align: center; width: 85%; font-weight: bold; }
+        
+        .hint { color: #fff; font-size: 9px; animation: blink 1s infinite; border: 1.5px solid #fff; padding: 8px 20px; border-radius: 30px; z-index: 101; background: rgba(0,0,0,0.5);}
         @keyframes blink { 50% { opacity: 0; } }
+
+        /* 霓虹灑花：緩慢飄落 (保持設定不變) */
+        .confetti { position: absolute; width: 8px; height: 8px; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
     </style>
 </head>
 <body id="body-area">
 
     <div class="scanlines"></div>
+    <div id="confetti-container"></div>
 
-    <div class="frame-glow" onclick="playPerfectSurprise()">
-        <div class="card" id="main-card">
+    <div class="book-wrapper" id="myBook" onclick="openBirthdayCard()">
+        <div class="cover card-base pixel-grain">
+            <div class="front-title">女人請打開</div>
+            <div class="hint">▶ PRESS TO START CELEBRATE ◀</div>
+        </div>
+
+        <div class="inner-page card-base pixel-grain">
             <div class="cake-container">
-                <div class="candle">
-                    <div class="flame"></div>
-                </div>
+                <div class="candle"><div class="flame"></div></div>
                 <div class="cake-body"></div>
             </div>
             
@@ -116,61 +173,83 @@
             </div>
 
             <div class="message-box">
-                就這樣 21 歲了，突然覺得認識好久了<br>
+                21 歲了，認識好久了<br>
                 祝 老闆前額葉杏仁核發展完完整整<br>
                 繼續一起開開心心跟我度過這一年女人。
             </div>
-
-            <div class="click-hint" id="hint">▶ TOUCH TO START PARTY</div>
         </div>
     </div>
 
     <script>
         let audioCtx = null;
+        let isOpened = false;
 
-        function playPerfectSurprise() {
-            // 1. 強制解鎖手機音訊上下文 (最高優先級)
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+        function openBirthdayCard() {
+            if (isOpened) return;
+            isOpened = true;
 
-            // 2. 啟動視覺機關
-            document.getElementById('main-card').classList.add('active');
-            document.getElementById('hint').style.display = 'none';
+            document.getElementById('myBook').classList.add('open');
 
-            // 3. 合成超輕快 8-bit 生日旋律 (BPM 140)
-            const gain = audioCtx.createGain();
-            gain.connect(audioCtx.destination);
-            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            createSuperSlowConfetti();
+            playLoudMusic(audioCtx);
+        }
+
+        function playLoudMusic(ctx) {
+            const gain = ctx.createGain();
+            gain.connect(ctx.destination);
+            // 音量保持炸裂
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
 
             const G3=392, A3=440, B3=493, C4=523, D4=587, E4=659, F4=698, G4=783;
-            const melody = [G3,G3,A3,G3,C4,B3,G3,G3,A3,G3,D4,C4,G3,G3,G4,E4,C4,B3,A3,F4,F4,E4,C4,D4,C4];
-            
-            // 調整為更輕快的速度
-            const tempo = 0.2; 
-            const beats = [tempo,tempo,tempo*2,tempo*2,tempo*2,tempo*4,tempo,tempo,tempo*2,tempo*2,tempo*2,tempo*4,tempo,tempo,tempo*2,tempo*2,tempo*2,tempo*2,tempo*4,tempo,tempo,tempo*2,tempo*2,tempo*2,tempo*6];
+            const melody = [
+                G3, G3, A3, G3, C4, B3, 
+                G3, G3, A3, G3, D4, C4, 
+                G3, G3, G4, E4, C4, B3, A3, 
+                F4, F4, E4, C4, D4, C4
+            ];
+            const tempo = 0.22; 
+            const beats = [
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4,
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*4,
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*2, tempo*4,
+                tempo, tempo, tempo*2, tempo*2, tempo*2, tempo*6
+            ];
 
             let offset = 0;
             melody.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
-                const noteGain = audioCtx.createGain();
-                
-                osc.type = 'square'; // 清脆像素感
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + offset);
-                
-                noteGain.gain.setValueAtTime(0.06, audioCtx.currentTime + offset);
-                noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + offset + beats[i] - 0.05);
-                
-                osc.connect(noteGain);
-                noteGain.connect(audioCtx.destination);
-                
-                osc.start(audioCtx.currentTime + offset);
-                osc.stop(audioCtx.currentTime + offset + beats[i]);
+                const osc = ctx.createOscillator();
+                const oscGain = ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
+                oscGain.gain.setValueAtTime(0.25, ctx.currentTime + offset);
+                oscGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + offset + beats[i] - 0.05);
+                osc.connect(oscGain);
+                oscGain.connect(gain);
+                osc.start(ctx.currentTime + offset);
+                osc.stop(ctx.currentTime + offset + beats[i]);
                 offset += beats[i];
             });
+        }
+
+        function createSuperSlowConfetti() {
+            const container = document.getElementById('confetti-container');
+            // 霓虹電玩色灑花
+            const colors = ['#ff00ff', '#33ffff', '#ffd700', '#ffffff', '#00ff00'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 8 + 4 + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.style.animationDuration = Math.random() * 3 + 8 + 's';
+                confetti.style.top = "-20px";
+                container.appendChild(confetti);
+            }
         }
     </script>
 </body>
